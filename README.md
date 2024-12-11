@@ -1,5 +1,5 @@
-# secret_sharing
+# visual_cryptographt
 
-This project python code for visual cryptography. First step get an image and convert it to gray scale image with Floyd-Steinberg dithering.
-Second step dithered image split three shares. Finally these shares will getting together and reconstruct original image.
+This project uses Python code for visual cryptography. The first step is to get an image and convert it to grayscale with Floyd-Steinberg dithering.
+The second step the dithered image split into three shares. Finally, these shares will be getting together and reconstructing the original image.
 
