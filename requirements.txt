@@ -1,0 +1,4 @@
+This project need some python libraries. 
+
+1. pillow (PIL) for Image :  python3 -m pip install pillow
+2. numpy for array operations : python3 -m pip install numpy
