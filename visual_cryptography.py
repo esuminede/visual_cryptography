@@ -4,9 +4,9 @@ import os
 import cv2
 
 def floyd_steinberg_dithering(image):
-    img = np.array(image, dtype=np.float32)
-    height, width = map(int, img.shape)
-
+    img = np.array(image, dtype=np.uint8)
+    height, width = img.shape
+    
     error_matrix = [
         (1, 0, 7 / 16),
         (-1, 1, 3 / 16),
@@ -64,7 +64,6 @@ if __name__ == "__main__":
     input_image = Image.open(r"C:\Users\EmineSudeAslan\Desktop\secret_sharing\images\flowers.jpeg").convert("L")
     output_image = floyd_steinberg_dithering(input_image)
 
-    output_image.show()
     output_image.save("output_dithered.jpg")
 
     output_dir = "shares"
@@ -79,4 +78,3 @@ if __name__ == "__main__":
     reconstructed = reconstruct_image(shares)
     reconstruct_image = Image.fromarray(reconstructed)
     reconstruct_image.save("reconstructed.png")
-    reconstruct_image.show()
