@@ -6,7 +6,11 @@ from generate_shares import *
 
 
 if __name__ == "__main__":
-    input_image = Image.open(r"C:\Users\EmineSudeAslan\Desktop\secret_sharing\images\woman.png").convert("L")
+    input_image_path = "/home/esa/Desktop/visual_cryptography/images/chessboard.jpeg"
+    input_image = Image.open(input_image_path).convert("L")
+    image = cv2.imread(input_image_path, cv2.IMREAD_GRAYSCALE)  # Read image in grayscale
+    _, img_array = cv2.threshold(image, 128, 255, cv2.THRESH_BINARY)  # Convert to binary image
+    height, width = img_array.shape
     output_image = jarvis_judice_ninke_dither(input_image)
     output_image.save("output_dithered.jpg")
 
