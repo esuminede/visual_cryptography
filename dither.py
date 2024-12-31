@@ -1,36 +1,47 @@
 import numpy as np
 from PIL import Image
 
+def floyd_steinberg_dithering(input_path):
+    # Resmi yükleyip grayscale'e dönüştürme
+    img = Image.open(input_path).convert('L')
 
-def floyd_steinberg_dithering(image):
-    img = np.array(image, dtype=np.uint8)
-    height, width = img.shape
-    
-    error_matrix = [
-        (1, 0, 7 / 16),
-        (-1, 1, 3 / 16),
-        (0, 1, 5 / 16), 
-        (1, 1, 1 / 16)
-    ]
+    # Görüntüyü numpy dizisine dönüştürme
+    img_array = np.array(img, dtype=np.float32) / 255.0  # 0-1 aralığına normalleştirme
+
+    # Resmin boyutlarını alalım
+    height, width = img_array.shape
+
+    # Floyd-Steinberg Dithering uygulaması
     for y in range(height):
-            for x in range(width):
-                old_pixel = img[y, x]
-                new_pixel = 0 if old_pixel < 128 else 255  # Threshold: 128
-                img[y, x] = new_pixel
+        for x in range(width):
+            old_pixel = img_array[y, x]
+            new_pixel = np.round(old_pixel)
+            img_array[y, x] = new_pixel
+            quant_error = old_pixel - new_pixel
 
-                quant_error = old_pixel - new_pixel  # Kuantizasyon hatası
+            if x < width - 1:
+                img_array[y, x + 1] += quant_error * 7 / 16
+            if y < height - 1 and x > 0:
+                img_array[y + 1, x - 1] += quant_error * 3 / 16
+            if y < height - 1:
+                img_array[y + 1, x] += quant_error * 5 / 16
+            if y < height - 1 and x < width - 1:
+                img_array[y + 1, x + 1] += quant_error * 1 / 16
 
-                # Komşu piksellere hatayı yay
-                for dx, dy, factor in error_matrix:
-                    nx, ny = x + dx, y + dy  # Komşu piksel koordinatları
-                    if 0 <= nx < width and 0 <= ny < height:  # Sınır kontrolü
-                        img[ny, nx] += quant_error * factor
+            # Piksel değerlerini 0 ile 1 arasında tutalım
+            img_array = np.clip(img_array, 0.0, 1.0)
 
-        # Piksel değerlerini 0-255 aralığına çek
-    return Image.fromarray(img.clip(0, 255).astype(np.uint8))
+    # Dithered görüntüyü oluşturma
+    dithered_img = (img_array * 255).astype(np.uint8)
+
+    # Sonucu kaydetme
+    dithered_image = Image.fromarray(dithered_img)
+    #dithered_image.save("dithered_image.png")
+    return dithered_image
 
 
 def jarvis_judice_ninke_dither(image_file):
+
         # Görüntüyü yükle ve gri tonlamaya dönüştür
     if isinstance(image_file, str):  # Eğer dosya yolu ise
         new_img = Image.open(image_file).convert('L')
